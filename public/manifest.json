@@ -1,0 +1,22 @@
+{
+  "name": "TESLA Technical Club",
+  "short_name": "TESLA",
+  "description": "TESLA Technical Club is a community of passionate learners and innovators.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03030b",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
