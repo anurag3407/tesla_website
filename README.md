@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <h1>🚀 TESLA Technical Club Website</h1>
+  <p>The official web platform for the TESLA Technical Club. Built with Next.js, MongoDB, and Tailwind CSS.</p>
+</div>
 
-## Getting Started
+---
 
-First, run the development server:
+## 🌟 About the Project
+This is a full-stack, highly interactive web application designed to serve as the central hub for the **TESLA Technical Club**. It manages everything from club information and event registrations to alumni networking and member dashboards.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### ✨ Key Features
+- **Dynamic Public Pages**: Beautiful, glassmorphic UI for Home, About, Events, Team, Blogs, Gallery, and Alumni.
+- **Member Dashboard**: Dedicated protected space for members to manage their profiles, track registered events, post blogs, upload resources, and showcase achievements.
+- **Admin Panel**: Complete content moderation and user management system with role-based access.
+- **Full-Stack Authentication**: Custom JWT-based authentication via Next.js API routes and Proxy middleware.
+- **PWA Ready**: Installable as a Progressive Web App on mobile devices.
+- **Smooth Animations**: Powered by Framer Motion and custom CSS 3D transforms.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠 Tech Stack
+- **Frontend**: Next.js 16 (App Router), React, Tailwind CSS, Framer Motion
+- **Backend**: Next.js API Routes, Node.js
+- **Database**: MongoDB, Mongoose
+- **Security**: bcryptjs, jsonwebtoken (JWT)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/anurag3407/tesla_website.git
+   cd tesla_website
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Set up Environment Variables**
+   Create a `.env.local` file in the root directory and add the following:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_super_secret_jwt_key
+   ```
 
-## Deploy on Vercel
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🤝 Contributing
+We love community contributions! Whether you're fixing a bug, adding a new feature, or updating documentation, your help is appreciated.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a Pull Request. Note: **All UI changes must include screenshots in the PR.**
+
+## 📄 License
+This project is open-source and available under the MIT License.
