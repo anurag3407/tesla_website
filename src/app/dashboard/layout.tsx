@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -17,7 +17,26 @@ import {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/user/me');
+        const data = await res.json();
+
+        if (data.success) {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const navItems = [
     { name: 'Profile', href: '/dashboard/profile', icon: User },
@@ -50,8 +69,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <img src="https://i.pravatar.cc/150?u=current_user" alt="User" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-white">John Doe</h2>
-              <p className="text-xs text-gray-400">Member</p>
+               <h2 className="text-sm font-bold text-white">
+                {user?.name || 'Loading...'}
+              </h2>
+
+              <p className="text-xs text-gray-400">
+                {user?.role || ''}
+              </p>
             </div>
           </div>
 
