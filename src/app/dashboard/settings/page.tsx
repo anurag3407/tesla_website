@@ -11,10 +11,58 @@ import {
 } from 'lucide-react';
 
 export default function DashboardSettings() {
+
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [publicProfile, setPublicProfile] = useState(true);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+
+    const handleChangePassword = async () => {
+      try {
+        if (newPassword !== confirmPassword) {
+          alert('Passwords do not match');
+          return;
+        }
+
+        const res = await fetch('/api/user/change-password', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword
+          })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          alert(data.message);
+          return;
+        }
+
+        alert('Password updated successfully');
+
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+
+        setShowPasswordModal(false);
+
+      } catch (error) {
+        console.error(error);
+        alert('Something went wrong');
+      }
+    };
+
+
+
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -156,23 +204,30 @@ export default function DashboardSettings() {
 
               <input
                 type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Current Password"
                 className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white"
               />
 
               <input
                 type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="New Password"
                 className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white"
               />
 
               <input
                 type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm New Password"
                 className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white"
               />
 
               <button
+                onClick={handleChangePassword}
                 className="w-full bg-primary py-3 rounded-lg text-white font-medium"
               >
                 Update Password
