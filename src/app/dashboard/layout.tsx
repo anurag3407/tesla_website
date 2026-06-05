@@ -2,7 +2,7 @@
 
 import { useState , useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname , useRouter } from 'next/navigation';
 import { 
   User, 
   FileText, 
@@ -16,10 +16,26 @@ import {
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+
   const pathname = usePathname();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST'
+      });
+
+      router.push('/login');
+    } catch (error) {
+      console.error(error);
+      alert('Logout failed');
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -104,7 +120,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Settings className="w-5 h-5" />
               Settings
             </Link>
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors">
               <LogOut className="w-5 h-5" />
               Logout
             </button>
