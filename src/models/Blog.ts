@@ -12,4 +12,7 @@ const blogSchema = new mongoose.Schema({
   tags: [{ type: String }]
 }, { timestamps: true });
 
+blogSchema.index({ createdAt: -1 });
+blogSchema.index({ status: 1 });
+
 export const Blog = mongoose.models.Blog || mongoose.model('Blog', blogSchema);

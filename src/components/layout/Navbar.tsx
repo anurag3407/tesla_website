@@ -99,7 +99,7 @@ export function Navbar() {
                 Login
               </Link>
               <Link href="/contact" className="text-center w-full block text-base font-medium bg-primary text-white py-2 rounded-md">
-                Join Us
+                Contact Us
               </Link>
             </div>
           </div>

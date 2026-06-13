@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Search, Clock, ThumbsUp, Bookmark, Share2 } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 import Link from 'next/link';
 
 export default function BlogsPage() {
@@ -40,6 +41,7 @@ export default function BlogsPage() {
 
   return (
     <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
         <div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Latest <span className="text-gradient">Blogs</span></h1>

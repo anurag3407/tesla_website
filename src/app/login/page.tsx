@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Mail, Lock, LogIn } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function LoginPage() {
 
@@ -50,19 +51,19 @@ export default function LoginPage() {
         break;
 
       case 'PI':
-        router.push('/pi');
+        router.push('/dashboard/leadership');
         break;
 
       case 'President':
-        router.push('/president');
+        router.push('/dashboard/leadership');
         break;
 
       case 'OfficeBearer':
-        router.push('/office-bearer');
+        router.push('/dashboard/leadership');
         break;
 
       case 'TeamLeader':
-        router.push('/team-leader');
+        router.push('/dashboard/team');
         break;
 
       case 'TeamMember':
@@ -70,7 +71,7 @@ export default function LoginPage() {
         break;
 
       case 'Alumni':
-        router.push('/alumni');
+        router.push('/dashboard/alumni');
         break;
 
       default:
@@ -89,6 +90,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen pt-20 flex items-center justify-center p-4">
+
+      < Navbar />
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

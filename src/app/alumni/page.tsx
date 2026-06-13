@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Search, MapPin, Briefcase, GraduationCap } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function AlumniPage() {
   const alumni = [
@@ -14,6 +15,7 @@ export default function AlumniPage() {
 
   return (
     <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="text-center max-w-3xl mx-auto mb-16">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">Alumni <span className="text-gradient">Network</span></h1>
         <p className="text-gray-400 text-lg">Connect with our successful alumni working at top tech companies worldwide.</p>

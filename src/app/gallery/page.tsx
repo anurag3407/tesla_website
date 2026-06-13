@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function GalleryPage() {
   const images = [
@@ -13,6 +14,7 @@ export default function GalleryPage() {
 
   return (
     <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="text-center max-w-3xl mx-auto mb-16">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">Glimpses of Our <span className="text-gradient">Journey</span></h1>
         <p className="text-gray-400 text-lg">Memories from workshops, hackathons, and fun events.</p>

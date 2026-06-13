@@ -2,10 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function ContactPage() {
   return (
     <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="text-center max-w-2xl mx-auto mb-16">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">Contact <span className="text-gradient">Us</span></h1>
         <p className="text-gray-400 text-lg">

@@ -177,5 +177,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.index({ createdAt: -1 });
+userSchema.index({ status: 1 });
+
 export const User =
   mongoose.models.User || mongoose.model('User', userSchema);

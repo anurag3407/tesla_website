@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { Blog } from '@/models/Blog';
+import '@/models/User';
 
 export async function GET() {
   try {
@@ -16,10 +17,11 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error(error);
+      console.error('ADMIN BLOG ERROR:', error);
 
-    return NextResponse.json({
-      success: false
-    });
-  }
+      return NextResponse.json({
+        success: false,
+        error: String(error)
+      });
+    }
 }

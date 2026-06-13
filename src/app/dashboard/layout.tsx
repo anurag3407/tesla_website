@@ -60,6 +60,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: 'My Events', href: '/dashboard/events', icon: Calendar },
     { name: 'My Resources', href: '/dashboard/resources', icon: BookOpen },
     { name: 'My Achievements', href: '/dashboard/achievements', icon: Trophy },
+
+    ...(user?.role === 'TeamLeader'
+      ? [
+          {
+            name: 'Team Dashboard',
+            href: '/dashboard/team',
+            icon: User
+          }
+        ]
+      : []),
+
+    ...(user?.role === 'PI' ||
+    user?.role === 'President' ||
+    user?.role === 'OfficeBearer'
+      ? [
+          {
+            name: 'Leadership',
+            href: '/dashboard/leadership',
+            icon: Trophy
+          }
+        ]
+      : []),
+
+    ...(user?.role === 'Alumni'
+      ? [
+          {
+            name: 'Alumni Hub',
+            href: '/dashboard/alumni',
+            icon: User
+          }
+        ]
+      : [])
   ];
 
   return (
