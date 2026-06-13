@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Calendar, Clock, MapPin, Search } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function EventsPage() {
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -17,8 +18,9 @@ export default function EventsPage() {
   const filteredEvents = events.filter(e => e.status === activeTab && (filter === 'all' || e.category === filter));
 
   return (
-    <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
+    
+    <div className="pt-25 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
         <div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Events</h1>

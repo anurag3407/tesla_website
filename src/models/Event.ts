@@ -14,4 +14,7 @@ const eventSchema = new mongoose.Schema({
   waitlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 }, { timestamps: true });
 
+eventSchema.index({ date: 1 });
+eventSchema.index({ createdAt: -1 });
+
 export const Event = mongoose.models.Event || mongoose.model('Event', eventSchema);

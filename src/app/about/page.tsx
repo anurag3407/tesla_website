@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Target, Zap, Rocket, CheckCircle2 } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function AboutPage() {
   const pillars = [
@@ -12,7 +13,7 @@ export default function AboutPage() {
 
   return (
     <div className="pt-24 pb-20 flex flex-col gap-20">
-      
+      <Navbar />
       {/* Origin Story */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <motion.div 

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Search, Download, FileText, Filter } from 'lucide-react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function ResourcesPage() {
   const [semester, setSemester] = useState('All');
@@ -18,6 +19,7 @@ export default function ResourcesPage() {
 
   return (
     <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
         <div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Resources <span className="text-gradient">Hub</span></h1>

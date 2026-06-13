@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function TeamPage() {
   const [roleFilter, setRoleFilter] = useState('Core');
@@ -19,6 +20,7 @@ export default function TeamPage() {
 
   return (
     <div className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Navbar />
       <div className="text-center max-w-2xl mx-auto mb-16">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">Meet the <span className="text-gradient">Experts</span></h1>
         <p className="text-gray-400 text-lg">

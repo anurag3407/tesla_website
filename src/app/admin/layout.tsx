@@ -1,25 +1,27 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  FileText, 
-  BookOpen, 
-  Trophy, 
-  GraduationCap, 
+
+import {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  FileText,
+  BookOpen,
+  Trophy,
+  GraduationCap,
   Image as ImageIcon,
   Bell,
   Settings,
   LogOut,
   Menu,
-  X
+  X,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -35,11 +37,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Announcements', href: '/admin/announcements', icon: Bell },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout Error:', error);
+    }
+  };
+
   return (
-    <div className="pt-20 min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-background">
       {/* Mobile sidebar toggle */}
-      <div className="lg:hidden fixed top-24 left-4 z-40">
-        <button 
+      <div className="lg:hidden fixed top-4 left-4 z-40">
+        <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 bg-primary text-white rounded-lg shadow-lg"
         >
@@ -48,14 +62,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Sidebar */}
-      <aside className={`
-        fixed lg:sticky top-20 left-0 z-30 h-[calc(100vh-5rem)] w-64 glass border-r border-white/5 transition-transform duration-300
+      <aside
+        className={`
+        fixed lg:sticky top-0 left-0 z-30 h-screen w-64 glass border-r border-white/5 transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
+      `}
+      >
         <div className="flex flex-col h-full overflow-y-auto py-6 px-4 hide-scrollbar">
-          <div className="mb-8 px-2">
-            <h2 className="text-xl font-bold text-white tracking-wide uppercase">Admin Panel</h2>
-            <p className="text-xs text-primary mt-1">Superuser Access</p>
+          <div className="mb-10 flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+              <span className="text-2xl font-bold text-white">T</span>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold text-white">TESLA</h2>
+              <p className="text-sm tracking-[0.3em] text-gray-400 uppercase">Technical Club</p>
+            </div>
           </div>
 
           <nav className="flex-1 space-y-1">
@@ -66,8 +88,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive 
-                      ? 'bg-primary/20 text-primary border border-primary/30' 
+                    isActive
+                      ? 'bg-primary/20 text-primary border border-primary/30'
                       : 'text-gray-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
@@ -78,23 +100,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             })}
           </nav>
 
-          <div className="mt-8 pt-6 border-t border-white/10 space-y-1">
-            <Link href="/admin/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors">
-              <Settings className="w-5 h-5" />
-              Settings
-            </Link>
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors">
-              <LogOut className="w-5 h-5" />
-              Logout
-            </button>
+          <div className="mt-8 pt-6 border-t border-white/10">
+            <p className="text-xs uppercase tracking-widest text-gray-500 px-3 mb-3">System</p>
+
+            <div className="space-y-1">
+              <Link
+                href="/admin/settings"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+              >
+                <Settings className="w-5 h-5" />
+                Settings
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-white/10 flex items-center gap-3 px-1">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shrink-0">
+              A
+            </div>
+            <div>
+              <h3 className="text-sm text-white font-semibold">Admin</h3>
+              <p className="text-xs text-gray-400">Super Admin</p>
+            </div>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 lg:p-10 w-full overflow-x-hidden">
-        {children}
-      </main>
+      <main className="flex-1 p-6 lg:p-8 overflow-x-hidden">{children}</main>
     </div>
   );
 }
