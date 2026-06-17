@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Target, Zap, Rocket, CheckCircle2 } from 'lucide-react';
+import { OurJourney } from "@/components/sections/OurJourney";
 
 export default function AboutPage() {
   const pillars = [
@@ -26,6 +27,8 @@ export default function AboutPage() {
           </p>
         </motion.div>
       </section>
+
+      <OurJourney/>
 
       {/* Three Pillars */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
