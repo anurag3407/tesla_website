@@ -4,16 +4,22 @@ import { FeaturedEvent } from "@/components/sections/FeaturedEvent";
 import { UpcomingEventsPreview } from "@/components/sections/UpcomingEventsPreview";
 import { OurImpact } from "@/components/sections/OurImpact";
 import { CTA } from "@/components/sections/CTA";
+import { Feature } from "@/components/sections/Feature";
+import { Footer } from "@/components/sections/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-10 pb-20">
-      <Hero />
-      <Features />
-      <FeaturedEvent />
-      <UpcomingEventsPreview />
-      <OurImpact />
-      <CTA />
-    </div>
+    <>
+      <div className="flex flex-col gap-10 pb-20">
+        <Hero />
+        <Features />
+        <FeaturedEvent />
+        <Feature/>
+        <UpcomingEventsPreview />
+        <OurImpact />
+        <CTA />
+      </div>
+      <Footer/>
+    </>
   );
 }
