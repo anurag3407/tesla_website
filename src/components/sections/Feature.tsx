@@ -81,21 +81,48 @@ const itemVariants = {
 
 export function Feature() {
   return (
-    <section className="mx-6 lg:mx-24 py-20">
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+    <section className="
+      mx-6 
+      lg:mx-24 
+      py-20
+      ">
+
+      <div className="
+      flex 
+      flex-col 
+      lg:flex-row 
+      lg:items-end 
+      lg:justify-between 
+      gap-6 
+      mb-10
+      ">
 
         <div>
-          <h6 className="text-muted-foreground tracking-[.25rem] uppercase mb-4">
+          <h6 className="
+          text-muted-foreground 
+          tracking-[.25rem] 
+          uppercase 
+          mb-4
+          ">
             02 Our Features
           </h6>
 
-          <h2 className="text-4xl lg:text-5xl font-bold">
+          <h2 className="
+          text-4xl 
+          lg:text-5xl 
+          font-bold
+          ">
             Everything you need to
             <br />
-            <span className="text-primary text-5xl">
+            <span className="
+            text-primary 
+            text-5xl
+            ">
               Grow & Excel
             </span>
           </h2>
+
+          
         </div>
       </div>
 
@@ -104,8 +131,15 @@ export function Feature() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1"
-      >
+        className="
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        lg:grid-cols-3 
+        xl:grid-cols-4 
+        gap-1
+        ">
+
         {features.map((feature) => {
           const Icon = feature.icon;
           const BgIcon = feature.bgIcon;
@@ -118,33 +152,91 @@ export function Feature() {
               viewport={{ once: true }}
               transition={{ duration: 1, delay: 1 }}
               variants={itemVariants}
-              className="glass group relative aspect-square p-8 overflow-hidden border-white/5  hover:bg-card hover:border-t-primary  hover:border-t-4 transition-all duration-500 cursor-pointer
+              className="
+              glass 
+              group 
+              relative 
+              aspect-square 
+              p-8 
+              overflow-hidden 
+              border-white/5  
+              hover:bg-card 
+              hover:border-t-primary  
+              hover:border-t-4 
+              transition-all 
+              duration-500 
+              cursor-pointer
               ">
 
-              <div className="flex justify-between mb-10">
-                <div className="w-12 h-12 flex items-center justify-center bg-[#0e1425] border border-primary/30 rounded-md">
+              <div className="
+              flex 
+              justify-between 
+              mb-10
+              ">
+
+                <div className="
+                w-12 
+                h-12 
+                flex 
+                items-center 
+                justify-center 
+                bg-[#0e1425] 
+                border 
+                border-primary/30 
+                rounded-md
+                ">
                   <Icon size={24} className="text-primary"/>
                 </div>
 
-                <span className="text-muted-foreground text-2xl font-bold">
+                <span className="
+                text-muted-foreground 
+                text-2xl 
+                font-bold
+                ">
                   {feature.number}
                 </span>
               </div>
 
               <div>
-                <h3
-                  className="text-3xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                <h3 className="
+                text-3xl 
+                font-semibold 
+                mb-2 
+                group-hover:text-primary 
+                transition-colors
+                ">
                   {feature.title}
                 </h3>
 
-                <p className="text-muted-foreground  leading-relaxed">
+                <p className="
+                text-muted-foreground  
+                leading-relaxed
+                ">
                   {feature.description}
                 </p>
               </div>
 
-              <ArrowRight size={20} className="absolute left-8 bottom-8 transition-all group-hover:text-primary group-hover:translate-x-3"/>
+              <ArrowRight size={20} className="
+              absolute 
+              left-8 
+              bottom-8 
+              transition-all 
+              group-hover:text-primary 
+              group-hover:translate-x-3
+              "/>
 
-              <BgIcon className="absolute -right-4 -bottom-4 w-50 h-50 text-primary opacity-[0.05] transition-all duration-500 group-hover:scale-125"/>
+              <BgIcon className="
+              absolute 
+              -right-4 
+              -bottom-4 
+              w-50 
+              h-50 
+              text-primary 
+              opacity-[0.05] 
+              transition-all 
+              duration-500 
+              group-hover:scale-125
+              "/>
             </motion.div>
           );
         })}

@@ -12,28 +12,43 @@ import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
 export function Footer() {
   return (
     <>
-    <footer className="mt-20 border-t border-border">
+    <footer className="
+    mt-20 
+    border-t 
+    border-border
+    ">
 
+      <div className="
+      flex 
+      flex-col px-10 
+      relative 
+      z-3 
+      md:grid 
+      md:grid-cols-2 
+      xl:flex 
+      xl:flex-row 
+      justify-between 
+      gap-10 
+      py-16 
+      border-b 
+      border-border
+      ">
 
-      <div className="flex flex-col px-10 relative z-3 md:grid md:grid-cols-2 xl:flex xl:flex-row justify-between gap-10 py-16 border-b border-border">
-
-{/* <div
-    className="
-      absolute inset-0
-      bg-[url('/images/damascus.png')]
-      bg-cover
-      bg-repeat
-      bg-center
-      z-0
-      opacity-[0.5]
-    "
-  /> */}
         <div>
-          <h2 className="text-5xl font-bold tracking-wider mb-8">
+          <h2 className="
+          text-5xl 
+          font-bold 
+          tracking-wider 
+          mb-8
+          ">
             TES<span className="text-primary">LA</span>
           </h2>
 
-          <p className="text-muted-foreground max-w-xs leading-8">
+          <p className="
+          text-muted-foreground 
+          max-w-xs 
+          leading-8
+          ">
             Tesla is the most active technical club of NIT Patna.
             <br/>
             NIT Patna's premier EE Club.
@@ -41,7 +56,13 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h4 className="text-muted-foreground text-xl tracking-wider mb-2 font-bold">
+          <h4 className="
+          text-muted-foreground 
+          text-xl 
+          tracking-wider 
+          mb-2 
+          font-bold
+          ">
             NAVIGATE
           </h4>
 
@@ -54,12 +75,26 @@ export function Footer() {
             'Gallery',
             'Contact'
           ].map((item) => (
-            <a key={item} href="#" className="text-gray-400 hover:text-primary hover:translate-x-1 transition-all">{item}</a>
+            <a key={item} href="#" className="
+            text-gray-400 
+            hover:text-primary 
+            hover:translate-x-1 
+            transition-all
+            ">
+              {item}
+            </a>
+
           ))}
         </div>
 
         <div className="flex flex-col gap-2">
-          <h4 className="text-muted-foreground text-xl tracking-wider mb-2 font-bold">
+          <h4 className="
+          text-muted-foreground 
+          text-xl 
+          tracking-wider 
+          mb-2 
+          font-bold
+          ">
             CONTACT
           </h4>
 
@@ -68,17 +103,33 @@ export function Footer() {
           <p className="text-gray-400">+91 9008745678</p>
         </div>
 
-        <div className="flex flex-col gap-3 min-w-[220px]">
-          <h4 className="text-muted-foreground text-xl tracking-wider font-bold">
+        <div className="
+        flex 
+        flex-col 
+        gap-3 
+        min-w-[220px]
+        ">
+          <h4 className="
+          text-muted-foreground 
+          text-xl 
+          tracking-wider 
+          font-bold
+          ">
             SOCIAL
           </h4>
 
-          <a href="#" className="hover:text-primary transition-all">
+          <a href="#" className="
+          hover:text-primary 
+          transition-all
+          ">
           <FontAwesomeIcon icon={faInstagram} />
              Instagram
           </a>
 
-          <a href="#" className="hover:text-primary transition-all">
+          <a href="#" className="
+          hover:text-primary 
+          transition-all
+          ">
           <FontAwesomeIcon icon={faFacebookF} />
             Facebook
           </a>
@@ -114,14 +165,26 @@ export function Footer() {
 
       
 
-      <div className="relative py-1 px-10 overflow-hidden">
+      <div className="
+      relative 
+      py-1 
+      px-10 
+      overflow-hidden
+      ">
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 1 }}
-          className="text-[3rem] md:text-[5rem] xl:text-[7rem] font-black text-[#0f0f0f] select-none">
+          className="
+          text-[3rem] 
+          md:text-[5rem] 
+          xl:text-[7rem] 
+          font-black 
+          text-[#0f0f0f] 
+          select-none
+          ">
           TESLA NITP
         </motion.div>
       </div>
