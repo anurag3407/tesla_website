@@ -8,6 +8,7 @@ import { getAuthPayload } from '@/lib/auth';
 import { TL_PERMISSION_KEYS, ACHIEVEMENT_MANAGER_PERMISSION } from '@/lib/permissions';
 import { getErrorDetails } from '@/lib/errors';
 import type { IUser } from '@/types/models';
+import { isValidObjectId } from '@/lib/regex';
 
 // Roles that may create/edit/delete/toggle members across teams.
 const MEMBER_MANAGERS = ['Admin', 'President', 'OfficeBearer'];
@@ -244,7 +245,7 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const { id, action, role } = body;
 
-    if (!id) return NextResponse.json({ success: false, message: 'Member id is required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, message: 'Member not found' }, { status: 404 });
 
     const target = await User.findById(id);
     if (!target) return NextResponse.json({ success: false, message: 'Member not found' }, { status: 404 });
@@ -276,6 +277,13 @@ export async function PATCH(req: Request) {
       }
       if (actorId && String(actorId) === String(id) && actorRole === 'Admin' && role !== 'Admin') {
         return NextResponse.json({ success: false, message: 'You cannot change your own Admin role.' }, { status: 400 });
+      }
+
+      if (target.role === 'Admin' && role !== 'Admin') {
+        const activeAdminCount = await User.countDocuments({ role: 'Admin', status: { $ne: 'inactive' } });
+        if (activeAdminCount <= 1) {
+          return NextResponse.json({ success: false, message: 'Cannot demote the last active Administrator.' }, { status: 400 });
+        }
       }
 
       target.role = role;
@@ -352,6 +360,12 @@ export async function PATCH(req: Request) {
       if (actorId && String(actorId) === String(id)) {
         return NextResponse.json({ success: false, message: 'You cannot change your own status.' }, { status: 400 });
       }
+      if (target.role === 'Admin' && target.status !== 'inactive') {
+        const activeAdminCount = await User.countDocuments({ role: 'Admin', status: { $ne: 'inactive' } });
+        if (activeAdminCount <= 1) {
+          return NextResponse.json({ success: false, message: 'Cannot deactivate the last active Administrator.' }, { status: 400 });
+        }
+      }
       target.status = target.status === 'inactive' ? 'active' : 'inactive';
       await target.save();
       return NextResponse.json({ success: true, message: `${target.name} is now ${target.status}.`, member: target }, { status: 200 });
@@ -378,7 +392,7 @@ export async function DELETE(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
-    if (!id) return NextResponse.json({ success: false, message: 'Member id is required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, message: 'Member not found' }, { status: 404 });
 
     const target = await User.findById(id).select('team role');
     if (!target) return NextResponse.json({ success: false, message: 'Member not found' }, { status: 404 });
@@ -389,6 +403,13 @@ export async function DELETE(req: Request) {
         { success: false, message: `Office Bearers cannot delete ${target.role} accounts.` },
         { status: 403 }
       );
+    }
+
+    if (target.role === 'Admin') {
+      const activeAdminCount = await User.countDocuments({ role: 'Admin', status: { $ne: 'inactive' } });
+      if (activeAdminCount <= 1) {
+        return NextResponse.json({ success: false, message: 'Cannot delete the last active Administrator.' }, { status: 400 });
+      }
     }
 
     const isManager = canManageMembers(actorRole);

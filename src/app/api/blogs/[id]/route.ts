@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import { Blog } from '@/models/Blog';
 import { requireAuth, getAuthPayload } from '@/lib/auth';
 import type { IBlog } from '@/types/models';
+import { isValidObjectId } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,10 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     await connectDB();
     const { id } = await context.params;
+
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
+    }
 
     const blog = await Blog.findById(id).lean<IBlog>();
     if (!blog) {
@@ -50,6 +55,11 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     await connectDB();
     const { id } = await context.params;
+
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
+    }
+
     const body = await request.json();
 
     const blog = await Blog.findById(id);
@@ -100,6 +110,10 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
     await connectDB();
     const { id } = await context.params;
+
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
+    }
 
     const blog = await Blog.findById(id);
     if (!blog) {

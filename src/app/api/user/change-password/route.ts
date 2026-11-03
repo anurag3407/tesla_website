@@ -16,6 +16,16 @@ export async function PUT(req: Request) {
       newPassword
     } = await req.json();
 
+    if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 6) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'New password must be at least 6 characters long'
+        },
+        { status: 400 }
+      );
+    }
+
     const user = await User.findById(payload!.userId).select('+password');
 
     if (!user) {

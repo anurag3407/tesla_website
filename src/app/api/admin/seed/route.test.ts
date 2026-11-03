@@ -14,6 +14,7 @@ const { userModel, authMock } = vi.hoisted(() => {
 vi.mock('@/lib/db', () => ({ default: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('@/models/User', () => ({ User: userModel }));
 vi.mock('@/lib/auth', () => ({ getAuthPayload: authMock.getAuthPayload }));
+vi.mock('bcryptjs', () => ({ default: { hash: vi.fn().mockResolvedValue('hashed_pw') } }));
 
 import { GET } from './route';
 

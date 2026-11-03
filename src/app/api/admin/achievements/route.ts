@@ -5,6 +5,7 @@ import { User } from '@/models/User';
 import { requireAuth } from '@/lib/auth';
 import { isAchievementManager } from '@/lib/permissions';
 import type { IAchievement, IUser } from '@/types/models';
+import { isValidObjectId } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -47,13 +48,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, description, category, teamMembers, coverImage, gallery, venue, achievementDate, organizer, tags, eventLink, isFeatured } = body;
 
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      return NextResponse.json({ success: false, error: 'Title is required' }, { status: 400 });
+    }
+
+    const parsedDate = achievementDate ? new Date(achievementDate) : new Date();
+    const cleanMembers = Array.isArray(teamMembers) ? teamMembers : typeof teamMembers === 'string' ? teamMembers.split(',').map((m: string) => m.trim()).filter(Boolean) : [];
+    const cleanGallery = Array.isArray(gallery) ? gallery : typeof gallery === 'string' ? gallery.split(',').map((g: string) => g.trim()).filter(Boolean) : [];
+    const cleanTags = Array.isArray(tags) ? tags : typeof tags === 'string' ? tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
+
     const item = await Achievement.create({
-      title, description, category, venue, organizer, eventLink,
+      title: title.trim(), description, category, venue, organizer, eventLink,
       coverImage,
-      achievementDate: new Date(achievementDate),
-      teamMembers: Array.isArray(teamMembers) ? teamMembers : teamMembers.split(',').map((m: string) => m.trim()),
-      gallery: Array.isArray(gallery) ? gallery : gallery.split(',').map((g: string) => g.trim()).filter(Boolean),
-      tags: Array.isArray(tags) ? tags : tags.split(',').map((t: string) => t.trim()).filter(Boolean),
+      achievementDate: isNaN(parsedDate.getTime()) ? new Date() : parsedDate,
+      teamMembers: cleanMembers,
+      gallery: cleanGallery,
+      tags: cleanTags,
       isFeatured: isSuper ? (isFeatured || false) : false, // Only super admins can feature
       status: isSuper ? 'Published' : 'Pending', // Managers bypass directly to Pending
       uploadedBy: user!._id,
@@ -73,6 +83,8 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json();
     const { id, title, description, category, teamMembers, coverImage, gallery, venue, achievementDate, organizer, tags, eventLink, isFeatured } = body;
+
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
 
     const existing = await Achievement.findById(id);
     if (!existing) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
@@ -105,6 +117,7 @@ export async function PATCH(request: NextRequest) {
     if (!isSuper) return NextResponse.json({ success: false, error: 'Only admins can change status' }, { status: 403 });
 
     const { id, status } = await request.json();
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
     await Achievement.findByIdAndUpdate(id, { status });
     return NextResponse.json({ success: true });
   } catch (error){
@@ -120,6 +133,8 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+
     const existing = await Achievement.findById(id);
     if (!existing) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
 

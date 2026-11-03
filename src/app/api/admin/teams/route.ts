@@ -8,6 +8,7 @@ import { Resource } from '@/models/Resource';
 import { getAuthPayload } from '@/lib/auth';
 import { TL_PERMISSION_KEYS } from '@/lib/permissions';
 import type { IResource, ITeamPopulated, IUser, LeanDoc } from '@/types/models';
+import { isValidObjectId } from '@/lib/regex';
 
 export const dynamic = 'force-dynamic';
 
@@ -179,7 +180,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const { id, name, description, coverImage, lead, isActive } = body;
 
-    if (!id) return NextResponse.json({ success: false, message: 'Team id is required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
 
     const team = await Team.findById(id);
     if (!team) return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
@@ -221,6 +222,7 @@ export async function PATCH(req: NextRequest) {
         }
         team.lead = null;
       } else {
+        if (!isValidObjectId(lead)) return NextResponse.json({ success: false, message: 'Selected leader not found' }, { status: 404 });
         const newLead = await User.findById(lead);
         if (!newLead) return NextResponse.json({ success: false, message: 'Selected leader not found' }, { status: 404 });
 
@@ -273,7 +275,7 @@ export async function DELETE(req: NextRequest) {
     }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
-    if (!id) return NextResponse.json({ success: false, message: 'Team id is required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });
 
     const team = await Team.findById(id);
     if (!team) return NextResponse.json({ success: false, message: 'Team not found' }, { status: 404 });

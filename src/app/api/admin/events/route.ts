@@ -5,6 +5,7 @@ import { Event } from '@/models/Event';
 import type { IEvent } from '@/types/models';
 import { requireAuth, requireRole } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errors';
+import { escapeRegex, isValidObjectId } from '@/lib/regex';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const search = searchParams.get('search');
+    const search = escapeRegex(searchParams.get('search'));
 
     const filter: QueryFilter<IEvent> = {};
     if (category && category !== 'All') filter.category = category;
@@ -168,8 +169,12 @@ export async function PATCH(request: NextRequest) {
     const body = (await request.json()) as EventPayload;
     const { id, action } = body; // action: 'approve' | 'reject'
 
+    if (!id || !isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Event allocation layout missed' }, { status: 404 });
+    }
+
     // ── Featured-only toggle ──────────────────────────────────────────────
-    if (id && typeof body.isFeatured === 'boolean' && action === undefined) {
+    if (typeof body.isFeatured === 'boolean' && action === undefined) {
       const updated = await Event.findByIdAndUpdate(
         id,
         { $set: { isFeatured: body.isFeatured } },
@@ -212,7 +217,7 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    if (!id) return NextResponse.json({ error: 'ID parameter required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ error: 'Event already dropped or missing' }, { status: 404 });
 
     const target = await Event.findByIdAndDelete(id);
     if (!target) return NextResponse.json({ error: 'Event already dropped or missing' }, { status: 404 });

@@ -11,15 +11,24 @@ export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    if (!email || !password) {
+    const rawEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+
+    if (!rawEmail || !password) {
       return NextResponse.json({ error: 'Please provide email and password' }, { status: 400 });
     }
 
     await connectDB();
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: rawEmail }).select('+password');
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    if (user.status === 'inactive') {
+      return NextResponse.json(
+        { error: 'Your account has been deactivated. Please contact an administrator.' },
+        { status: 403 }
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

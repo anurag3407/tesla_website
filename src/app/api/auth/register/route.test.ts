@@ -9,6 +9,12 @@ const { userModel } = vi.hoisted(() => {
 
 vi.mock('@/lib/db', () => ({ default: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('@/models/User', () => ({ User: userModel }));
+vi.mock('bcryptjs', () => ({
+  default: {
+    genSalt: vi.fn().mockResolvedValue('salt'),
+    hash: vi.fn().mockResolvedValue('hashed_password'),
+  },
+}));
 
 import { POST } from './route';
 
@@ -64,5 +70,33 @@ describe('POST /api/auth/register', () => {
     expect(res.status).toBe(201);
     expect(data.message).toMatch(/registered successfully/i);
     expect(userModel.create).toHaveBeenCalled();
+  });
+
+  it('rejects passwords shorter than 6 characters', async () => {
+    const res = await POST(
+      postRequest({ name: 'Short PW', email: 'test@tesla.club', password: '123' })
+    );
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toMatch(/at least 6 characters/i);
+    expect(userModel.create).not.toHaveBeenCalled();
+  });
+
+  it('normalizes email with lowercase and trimming', async () => {
+    userModel.findOne.mockResolvedValue(null);
+    userModel.create.mockResolvedValue({ _id: 'id1' });
+
+    await POST(
+      postRequest({ name: '  Jane Doe  ', email: '  Jane.Doe@Tesla.Club  ', password: 'password123' })
+    );
+
+    expect(userModel.findOne).toHaveBeenCalledWith({ email: 'jane.doe@tesla.club' });
+    expect(userModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Jane Doe',
+        email: 'jane.doe@tesla.club',
+      })
+    );
   });
 });

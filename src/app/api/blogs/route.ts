@@ -4,6 +4,7 @@ import connectDB from '@/lib/db';
 import { Blog } from '@/models/Blog';
 import type { IBlog, IBlogPopulated } from '@/types/models';
 import { requireAuth } from '@/lib/auth';
+import { escapeRegex } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search');
+    const search = escapeRegex(searchParams.get('search'));
     const category = searchParams.get('category');
     const limit = Math.min(Number(searchParams.get('limit')) || 0, 100);
 

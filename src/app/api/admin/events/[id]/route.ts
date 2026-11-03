@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { Event } from '@/models/Event';
 import { requireAuth, requireRole } from '@/lib/auth';
+import { isValidObjectId } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 const CONTENT_MANAGERS = ['Admin', 'President', 'OfficeBearer'] as const;
@@ -18,6 +19,9 @@ export async function GET(_req: NextRequest, context: RouteContext) {
 
     await connectDB();
     const { id } = await context.params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
 
     const event = await Event.findById(id).lean();
     if (!event) {
@@ -37,6 +41,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     await connectDB();
     const { id } = await context.params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
     const body = await request.json();
 
     if (body.date) body.date = new Date(body.date);
@@ -65,6 +72,9 @@ export async function DELETE(_req: NextRequest, context: RouteContext) {
 
     await connectDB();
     const { id } = await context.params;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
 
     const event = await Event.findByIdAndDelete(id);
     if (!event) {

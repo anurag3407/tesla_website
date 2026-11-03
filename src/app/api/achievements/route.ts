@@ -3,6 +3,7 @@ import type { QueryFilter } from 'mongoose';
 import connectDB from '@/lib/db';
 import { Achievement } from '@/models/Achievement';
 import type { IAchievement } from '@/types/models';
+import { escapeRegex } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
     await connectDB();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const search = searchParams.get('search');
+    const search = escapeRegex(searchParams.get('search'));
 
     const filter: QueryFilter<IAchievement> = { status: { $nin: ['Pending', 'Rejected'] } };
     if (category && category !== 'All') filter.category = category;

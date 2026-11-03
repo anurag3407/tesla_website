@@ -10,13 +10,20 @@ export async function POST(req: Request) {
       name, email, password, rollNo, branch, year, batch, team,
     } = await req.json();
 
-    if (!name || !email || !password) {
+    const rawName = typeof name === 'string' ? name.trim() : '';
+    const rawEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+
+    if (!rawName || !rawEmail || !password) {
       return NextResponse.json({ error: 'Please provide all required fields' }, { status: 400 });
+    }
+
+    if (typeof password !== 'string' || password.length < 6) {
+      return NextResponse.json({ error: 'Password must be at least 6 characters long' }, { status: 400 });
     }
 
     await connectDB();
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: rawEmail });
     if (existingUser) {
       return NextResponse.json({ error: 'User already exists with this email' }, { status: 400 });
     }
@@ -29,8 +36,8 @@ export async function POST(req: Request) {
     // — there is no 'General'. New self-registrations must come in as 'TeamMember'
     // (admin/president/etc. are assigned later via /admin/members).
     const newUser = await User.create({
-      name,
-      email,
+      name: rawName,
+      email: rawEmail,
       password: hashedPassword,
 
       rollNo,

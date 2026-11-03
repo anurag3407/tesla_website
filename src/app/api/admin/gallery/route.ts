@@ -4,6 +4,7 @@ import type { IGallery } from '@/types/models';
 import connectDB from '@/lib/db';
 import { Gallery } from '@/models/Gallery';
 import { requireAuth, requireRole } from '@/lib/auth';
+import { isValidObjectId } from '@/lib/regex';
 
 export const dynamic = 'force-dynamic';
 
@@ -140,7 +141,7 @@ export async function DELETE(request: NextRequest) {
     await connectDB();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    if (!id) {
+    if (!id || !isValidObjectId(id)) {
       return NextResponse.json({ success: false, error: 'ID required' }, { status: 400 });
     }
     await Gallery.findByIdAndDelete(id);

@@ -3,6 +3,7 @@ import type { QueryFilter } from 'mongoose';
 import connectDB from '@/lib/db';
 import { User } from '@/models/User';
 import type { IUser } from '@/types/models';
+import { escapeRegex } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search');
+    const search = escapeRegex(searchParams.get('search'));
     const batch = searchParams.get('batch');
     const limit = Math.min(Number(searchParams.get('limit')) || 0, 100);
     const skip = Number(searchParams.get('skip')) || 0;

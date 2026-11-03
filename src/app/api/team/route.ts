@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { User } from '@/models/User';
+import { escapeRegex } from '@/lib/regex';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search');
+    const search = escapeRegex(searchParams.get('search'));
     const role = searchParams.get('role'); // filter by club role
     const limit = Math.min(Number(searchParams.get('limit')) || 0, 100);
     const skip = Number(searchParams.get('skip')) || 0;

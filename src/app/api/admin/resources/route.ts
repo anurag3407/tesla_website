@@ -4,6 +4,7 @@ import { Resource } from '@/models/Resource';
 import { requireAuth, requireRole } from '@/lib/auth';
 import type { QueryFilter } from 'mongoose';
 import type { IResource } from '@/types/models';
+import { escapeRegex, isValidObjectId } from '@/lib/regex';
 
 
 import { getErrorMessage } from '@/lib/errors';
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
     let resource = await Resource.findOne({
       department,
       semester: Number(semester),
-      subjectName: { $regex: new RegExp(`^${subjectName.trim()}$`, 'i') }
+      subjectName: { $regex: new RegExp(`^${escapeRegex(subjectName)}$`, 'i') }
     });
 
     const newFilePayload = { title: fileTitle, fileUrl, type: fileType, views: 0, downloads: 0, uploadedBy: payload!.userId };
@@ -133,7 +134,7 @@ export async function PATCH(request: NextRequest) {
     await connectDB();
     const { fileId, actionType } = await request.json(); // actionType: 'views' | 'downloads'
 
-    if (!fileId || !['views', 'downloads'].includes(actionType)) {
+    if (!fileId || !isValidObjectId(fileId) || !['views', 'downloads'].includes(actionType)) {
       return NextResponse.json({ success: false, error: 'Invalid operation parameters' }, { status: 400 });
     }
 

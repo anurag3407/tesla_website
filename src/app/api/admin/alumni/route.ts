@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import { requireRole } from '@/lib/auth';
 import type { QueryFilter } from 'mongoose';
 import type { IUser } from '@/types/models';
+import { escapeRegex, isValidObjectId } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
     await connectDB();
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode');
-    const search = searchParams.get('search') || '';
+    const search = escapeRegex(searchParams.get('search'));
 
     // 1. Agar mode 'convertable' hai toh un members ko dhoondo jo abhi alumni nahi hain
     if (mode === 'convertable') {
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
 
     // A. FLOW 1: Convert existing user to Alumni status
     if (mode === 'convert') {
-      if (!userId) return NextResponse.json({ success: false, error: 'User ID missing' }, { status: 400 });
+      if (!userId || !isValidObjectId(userId)) return NextResponse.json({ success: false, error: 'User ID missing or invalid' }, { status: 400 });
 
       // Converting demotes the target's role to Alumni — an OfficeBearer may not
       // do that to a privileged account.
@@ -129,6 +130,12 @@ export async function POST(request: NextRequest) {
           { success: false, error: `Office Bearers cannot convert ${targetUser.role} accounts to Alumni.` },
           { status: 403 }
         );
+      }
+      if (targetUser.role === 'Admin') {
+        const activeAdmins = await User.countDocuments({ role: 'Admin', status: { $ne: 'inactive' } });
+        if (activeAdmins <= 1) {
+          return NextResponse.json({ success: false, error: 'Cannot convert the last active Administrator to Alumni.' }, { status: 400 });
+        }
       }
 
       const updatedUser = await User.findByIdAndUpdate(
@@ -238,16 +245,24 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    if (!id) return NextResponse.json({ success: false, error: 'ID is missing' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) return NextResponse.json({ success: false, error: 'ID is missing or invalid' }, { status: 400 });
 
     // This deletes the underlying User document — an OfficeBearer may never
     // remove a privileged account through the alumni panel.
     const targetUser = await User.findById(id).select('role').lean<IUser>();
-    if (targetUser && obBlocked(payload?.role, targetUser.role)) {
+    if (!targetUser) return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+
+    if (obBlocked(payload?.role, targetUser.role)) {
       return NextResponse.json(
         { success: false, error: `Office Bearers cannot delete ${targetUser.role} accounts.` },
         { status: 403 }
       );
+    }
+    if (targetUser.role === 'Admin') {
+      const activeAdmins = await User.countDocuments({ role: 'Admin', status: { $ne: 'inactive' } });
+      if (activeAdmins <= 1) {
+        return NextResponse.json({ success: false, error: 'Cannot delete the last active Administrator.' }, { status: 400 });
+      }
     }
 
     // Individual absolute deletion purging execution bounds

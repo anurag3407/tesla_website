@@ -77,6 +77,19 @@ describe('/api/member route', () => {
     );
   });
 
+  const VALID_GALLERY_ID = '507f1f77bcf86cd799439099';
+
+  it('DELETE returns 400 when id is missing or not a valid ObjectId', async () => {
+    authMock.getAuthPayload.mockResolvedValue({ userId: 'u123', role: 'TeamMember' });
+    const req = new Request('http://localhost/api/member?target=gallery&id=bad-id', {
+      method: 'DELETE',
+    });
+    const res = await DELETE(req as any);
+    const data = await res.json();
+    expect(res.status).toBe(400);
+    expect(data.error).toMatch(/Target id is required/);
+  });
+
   it('DELETE gallery returns 403 when user is not a manager', async () => {
     authMock.getAuthPayload.mockResolvedValue({ userId: 'u123', role: 'TeamMember' });
     userModel.findById.mockReturnValue({
@@ -85,7 +98,7 @@ describe('/api/member route', () => {
       }),
     });
 
-    const req = new Request('http://localhost/api/member?target=gallery&id=g123', {
+    const req = new Request(`http://localhost/api/member?target=gallery&id=${VALID_GALLERY_ID}`, {
       method: 'DELETE',
     });
 
@@ -104,10 +117,10 @@ describe('/api/member route', () => {
         lean: vi.fn().mockResolvedValue({ role: 'OfficeBearer', status: 'active' }),
       }),
     });
-    galleryModel.findById.mockResolvedValue({ _id: 'g123' });
-    galleryModel.findByIdAndDelete.mockResolvedValue({ _id: 'g123' });
+    galleryModel.findById.mockResolvedValue({ _id: VALID_GALLERY_ID });
+    galleryModel.findByIdAndDelete.mockResolvedValue({ _id: VALID_GALLERY_ID });
 
-    const req = new Request('http://localhost/api/member?target=gallery&id=g123', {
+    const req = new Request(`http://localhost/api/member?target=gallery&id=${VALID_GALLERY_ID}`, {
       method: 'DELETE',
     });
 
@@ -116,6 +129,6 @@ describe('/api/member route', () => {
 
     expect(res.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(galleryModel.findByIdAndDelete).toHaveBeenCalledWith('g123');
+    expect(galleryModel.findByIdAndDelete).toHaveBeenCalledWith(VALID_GALLERY_ID);
   });
 });

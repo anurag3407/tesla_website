@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { Blog } from '@/models/Blog';
 import { requireRole } from '@/lib/auth';
+import { isValidObjectId } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 export const dynamic = 'force-dynamic';
@@ -20,8 +21,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     const { id } = await context.params;
     const body = await request.json();
 
-    if (!id) {
-      return NextResponse.json({ success: false, error: 'Blog ID is required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) {
+      return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     }
 
     // ── Status-only update (Publish / Reject) ─────────────────────────────
@@ -89,8 +90,8 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     await connectDB();
     const { id } = await context.params;
 
-    if (!id) {
-      return NextResponse.json({ success: false, error: 'Blog ID is required' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) {
+      return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     }
 
     const deleted = await Blog.findByIdAndDelete(id);

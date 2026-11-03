@@ -5,6 +5,7 @@ import { Gallery } from '@/models/Gallery';
 import { User } from '@/models/User';
 import { getAuthPayload } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errors';
+import { escapeRegex, isValidObjectId } from '@/lib/regex';
 
 // ─── POST: Member Resource Upload with Auto Ownership Binding ───
 export async function POST(request: NextRequest) {
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'subjectName is required' }, { status: 400 });
       }
 
-      const escaped = subjectName.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escaped = escapeRegex(subjectName);
       let resource = await Resource.findOne({
         department,
         semester: Number(semester),
@@ -72,7 +73,7 @@ export async function DELETE(request: NextRequest) {
     const target = searchParams.get('target'); // 'resource' | 'gallery'
     const id = searchParams.get('id');
 
-    if (!id) {
+    if (!id || !isValidObjectId(id)) {
       return NextResponse.json({ success: false, error: 'Target id is required' }, { status: 400 });
     }
 

@@ -6,6 +6,7 @@ import { Event } from '@/models/Event';
 import { Resource } from '@/models/Resource';
 import type { IBlog, IEvent, IResource, IUser } from '@/types/models';
 import { requireAuth } from '@/lib/auth';
+import { isValidObjectId } from '@/lib/regex';
 
 import { getErrorMessage } from '@/lib/errors';
 // ─── GET: read-only profile dataset for any member by id ───
@@ -17,6 +18,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     if (authError) return authError;
 
     const { userId } = await params;
+    if (!isValidObjectId(userId)) {
+      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+    }
 
     await connectDB();
 
@@ -40,10 +44,24 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const blogs = await Blog.find({ author: user._id }).sort({ createdAt: -1 }).limit(10).lean<IBlog[]>();
     const events = await Event.find({ registeredUsers: user._id }).sort({ date: -1 }).limit(10).lean<IEvent[]>();
 
+    const isOwn = user._id.toString() === payload!.userId;
+    const isPrivileged = ['Admin', 'President'].includes(payload!.role);
+
+    const safeUser: Record<string, unknown> = {
+      ...user,
+      rollNumber: user.rollNumber || user.rollNo || '',
+    };
+
+    if (!isOwn && !isPrivileged) {
+      delete safeUser.phone;
+      delete safeUser.cgpa;
+      delete safeUser.resume;
+    }
+
     return NextResponse.json({
       success: true,
-      isOwn: user._id.toString() === payload!.userId,
-      user: { ...user, rollNumber: user.rollNumber || user.rollNo || '' },
+      isOwn,
+      user: safeUser,
       stats: {
         blogsWritten,
         approvedEvents,
