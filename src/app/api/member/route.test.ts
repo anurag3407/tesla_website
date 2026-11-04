@@ -131,4 +131,78 @@ describe('/api/member route', () => {
     expect(data.success).toBe(true);
     expect(galleryModel.findByIdAndDelete).toHaveBeenCalledWith(VALID_GALLERY_ID);
   });
+
+  const VALID_FILE_ID = '507f1f77bcf86cd799439088';
+
+  it('DELETE resource returns 403 when standard member tries to delete file uploaded by someone else', async () => {
+    authMock.getAuthPayload.mockResolvedValue({ userId: 'u123', role: 'TeamMember' });
+    userModel.findById.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        lean: vi.fn().mockResolvedValue({ role: 'TeamMember', status: 'active' }),
+      }),
+    });
+    // findOneAndUpdate with ownership check fails to find a matching document
+    resourceModel.findOneAndUpdate.mockResolvedValue(null);
+
+    const req = new Request(`http://localhost/api/member?target=resource&id=${VALID_FILE_ID}`, {
+      method: 'DELETE',
+    });
+
+    const res = await DELETE(req as any);
+    const data = await res.json();
+
+    expect(res.status).toBe(403);
+    expect(data.error).toMatch(/Access Denied: Object ownership mismatch/i);
+    expect(resourceModel.findOneAndUpdate).toHaveBeenCalledWith(
+      { 'files._id': VALID_FILE_ID, 'files.uploadedBy': 'u123' },
+      { $pull: { files: { _id: VALID_FILE_ID } } },
+      { new: true }
+    );
+  });
+
+  it('DELETE resource succeeds when standard member deletes their own file', async () => {
+    authMock.getAuthPayload.mockResolvedValue({ userId: 'u123', role: 'TeamMember' });
+    userModel.findById.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        lean: vi.fn().mockResolvedValue({ role: 'TeamMember', status: 'active' }),
+      }),
+    });
+    resourceModel.findOneAndUpdate.mockResolvedValue({ _id: 'r1' });
+
+    const req = new Request(`http://localhost/api/member?target=resource&id=${VALID_FILE_ID}`, {
+      method: 'DELETE',
+    });
+
+    const res = await DELETE(req as any);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.success).toBe(true);
+  });
+
+  it('DELETE resource succeeds when Admin deletes any file regardless of uploader', async () => {
+    authMock.getAuthPayload.mockResolvedValue({ userId: 'admin1', role: 'Admin' });
+    userModel.findById.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        lean: vi.fn().mockResolvedValue({ role: 'Admin', status: 'active' }),
+      }),
+    });
+    resourceModel.findOneAndUpdate.mockResolvedValue({ _id: 'r1' });
+
+    const req = new Request(`http://localhost/api/member?target=resource&id=${VALID_FILE_ID}`, {
+      method: 'DELETE',
+    });
+
+    const res = await DELETE(req as any);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.success).toBe(true);
+    // Notice that uploadedBy is omitted from filter for managers (single-tenant club override)
+    expect(resourceModel.findOneAndUpdate).toHaveBeenCalledWith(
+      { 'files._id': VALID_FILE_ID },
+      { $pull: { files: { _id: VALID_FILE_ID } } },
+      { new: true }
+    );
+  });
 });
