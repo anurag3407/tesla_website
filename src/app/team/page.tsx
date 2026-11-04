@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { KeyboardEvent, MouseEvent } from 'react';
-import { Search } from 'lucide-react';
+import { Search, ArrowRight, Globe } from 'lucide-react';
+import { FaGithub, FaLinkedin, FaTwitter } from '@/components/ui/SocialIcons';
 import { useApi } from '@/lib/api';
 import { Avatar, EmptyState, ErrorState, SkeletonGrid } from '@/components/ui/States';
 import { ScrollReveal, StaggerGroup, StaggerItem } from '@/components/ui/ScrollReveal';
@@ -117,7 +118,7 @@ export default function TeamPage() {
             <EmptyState title="No members found" hint="Try a different filter or search term." />
           ) : (
             <>
-              <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
                 {shown.map((member) => (
                   <StaggerItem key={member.id} className="h-full">
                   <div
@@ -126,48 +127,109 @@ export default function TeamPage() {
                     aria-label={`View profile of ${member.name}`}
                     onClick={() => openMember(member.id)}
                     onKeyDown={(e) => onCardKey(e, member.id)}
-                    className="card-brut rounded-xl p-6 flex flex-col items-center text-center h-full hover:-translate-y-0.5 transition-transform cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-acid focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+                    className="card-brut rounded-2xl border border-line/80 bg-gradient-to-b from-ink-2/95 via-ink-2/70 to-ink-3/95 p-7 sm:p-8 flex flex-col items-center text-center h-full hover:-translate-y-1.5 transition-all duration-300 cursor-pointer relative group overflow-hidden shadow-lg hover:border-acid/60 hover:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.8),0_0_20px_-5px_rgba(216,255,61,0.2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-acid focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
                   >
-                    <Avatar src={member.profileImage} name={member.name} />
-                    <h3 className="display text-lg mt-4">{member.name}</h3>
-                    <p className="font-mono text-[11px] tracking-[0.14em] uppercase text-acid mt-1">
+                    {/* Decorative cyber corner ticks */}
+                    <div className="absolute top-2.5 left-2.5 text-[10px] font-mono text-muted/30 select-none pointer-events-none group-hover:text-acid/40 transition-colors">
+                      +
+                    </div>
+                    <div className="absolute top-2.5 right-2.5 text-[10px] font-mono text-muted/30 select-none pointer-events-none group-hover:text-acid/40 transition-colors">
+                      +
+                    </div>
+
+                    {/* Elevated Avatar */}
+                    <div className="relative p-1 rounded-2xl bg-ink-3/90 border border-line/80 group-hover:border-acid/60 group-hover:scale-105 transition-all duration-300 shadow-md">
+                      <Avatar src={member.profileImage} name={member.name} className="w-24 h-24 text-2xl rounded-xl" />
+                    </div>
+
+                    {/* Member Identity */}
+                    <h3 className="display text-xl sm:text-2xl mt-4 text-ivory group-hover:text-acid transition-colors font-bold tracking-tight">
+                      {member.name}
+                    </h3>
+
+                    {/* Role Pill */}
+                    <div className="mt-2.5 inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono uppercase tracking-[0.12em] font-semibold bg-acid/10 text-acid border border-acid/25">
                       {member.designation || member.role}
-                    </p>
-                    <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-muted mt-1">
+                    </div>
+
+                    {/* Team & Batch */}
+                    <p className="font-mono text-xs tracking-wider uppercase text-muted mt-2">
                       {[member.team, member.batch ? `Batch ${member.batch}` : member.year]
                         .filter(Boolean)
                         .join(' · ') || '\u00A0'}
                     </p>
-                    {member.bio && <p className="text-xs text-ivory-2 mt-3 line-clamp-3">{member.bio}</p>}
 
+                    {/* Bio */}
+                    {member.bio ? (
+                      <p className="text-xs sm:text-[13px] text-ivory-2/80 mt-3.5 line-clamp-3 leading-relaxed min-h-[3.6rem] px-1">
+                        {member.bio}
+                      </p>
+                    ) : (
+                      <div className="min-h-[3.6rem]" />
+                    )}
+
+                    {/* Skills */}
                     {member.skills && member.skills.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 justify-center mt-3">
+                      <div className="flex flex-wrap gap-1.5 justify-center mt-4 pt-3.5 border-t border-line/40 w-full">
                         {member.skills.slice(0, 3).map((s: string) => (
-                          <span key={s} className="chip border border-line text-muted !py-0.5 !px-2 !text-[10px]">
+                          <span key={s} className="font-mono text-[11px] px-2.5 py-1 rounded-md border border-line/70 bg-ink-3/70 text-muted group-hover:border-line-2 transition-colors">
                             {s}
                           </span>
                         ))}
                         {member.skills.length > 3 && (
-                          <span className="chip border border-acid/50 text-acid !py-0.5 !px-2 !text-[10px]">
-                            +{member.skills.length - 3} more
+                          <span className="font-mono text-[11px] px-2.5 py-1 rounded-md border border-acid/40 bg-acid/10 text-acid">
+                            +{member.skills.length - 3}
                           </span>
                         )}
                       </div>
                     )}
 
-                    {(member.socialLinks?.linkedin || member.socialLinks?.github || member.portfolio) && (
-                      <div className="flex gap-2 mt-auto pt-5">
+                    {/* Bottom Action Dock */}
+                    <div className="flex items-center justify-between w-full mt-auto pt-5 border-t border-line/60">
+                      <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-muted group-hover:text-acid transition-colors font-medium">
+                        <span>Profile</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </span>
+
+                      <div className="flex items-center gap-1.5">
                         {member.socialLinks?.linkedin && (
-                          <a href={member.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onClick={stopNav} className="w-8 h-8 rounded-md border border-line flex items-center justify-center hover:border-acid hover:text-acid text-ivory-2 transition-colors text-xs font-mono">in</a>
+                          <a
+                            href={member.socialLinks.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="LinkedIn Profile"
+                            onClick={stopNav}
+                            className="p-2 rounded-lg border border-line/70 bg-ink/70 hover:border-acid hover:text-acid hover:bg-acid/10 text-ivory-2 transition-colors"
+                          >
+                            <FaLinkedin className="w-3.5 h-3.5" />
+                          </a>
                         )}
                         {member.socialLinks?.github && (
-                          <a href={member.socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" onClick={stopNav} className="w-8 h-8 rounded-md border border-line flex items-center justify-center hover:border-acid hover:text-acid text-ivory-2 transition-colors text-xs font-mono">{'</>'}</a>
+                          <a
+                            href={member.socialLinks.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="GitHub Profile"
+                            onClick={stopNav}
+                            className="p-2 rounded-lg border border-line/70 bg-ink/70 hover:border-acid hover:text-acid hover:bg-acid/10 text-ivory-2 transition-colors"
+                          >
+                            <FaGithub className="w-3.5 h-3.5" />
+                          </a>
                         )}
                         {member.portfolio && (
-                          <a href={member.portfolio} target="_blank" rel="noopener noreferrer" aria-label="Portfolio" onClick={stopNav} className="w-8 h-8 rounded-md border border-line flex items-center justify-center hover:border-acid hover:text-acid text-ivory-2 transition-colors text-xs font-mono">@</a>
+                          <a
+                            href={member.portfolio}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Portfolio Website"
+                            onClick={stopNav}
+                            className="p-2 rounded-lg border border-line/70 bg-ink/70 hover:border-acid hover:text-acid hover:bg-acid/10 text-ivory-2 transition-colors"
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                          </a>
                         )}
                       </div>
-                    )}
+                    </div>
                   </div>
                   </StaggerItem>
                 ))}

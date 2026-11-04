@@ -37,12 +37,14 @@ export function EmptyState({ title, hint }: { title: string; hint?: string }) {
 
 export function SkeletonGrid({ count = 8 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="card-brut rounded-xl p-6 animate-pulse">
-          <div className="w-16 h-16 rounded-md bg-ink-3 mb-4" />
-          <div className="h-4 w-3/4 bg-ink-3 rounded mb-2" />
-          <div className="h-3 w-1/2 bg-ink-3 rounded" />
+        <div key={i} className="card-brut rounded-2xl p-7 sm:p-8 animate-pulse flex flex-col items-center">
+          <div className="w-24 h-24 rounded-2xl bg-ink-3 mb-4" />
+          <div className="h-5 w-3/4 bg-ink-3 rounded mb-2.5" />
+          <div className="h-4 w-1/2 bg-ink-3 rounded mb-4" />
+          <div className="h-3 w-5/6 bg-ink-3 rounded mb-2" />
+          <div className="h-3 w-4/6 bg-ink-3 rounded mt-auto pt-6" />
         </div>
       ))}
     </div>

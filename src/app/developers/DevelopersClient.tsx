@@ -224,7 +224,7 @@ export function DevelopersClient() {
                   </button>
                 </div>
               ) : (
-                <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
                   {filteredDevelopers.map((developer) => (
                     <StaggerItem key={developer.id} className="h-full">
                       <DeveloperCard developer={developer} />

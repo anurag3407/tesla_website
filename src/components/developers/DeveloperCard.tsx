@@ -82,38 +82,38 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
   return (
     <>
       <div
-        className={`group relative card-brut rounded-2xl overflow-hidden border border-line bg-ink-2/95 transition-all duration-300 flex flex-col justify-between ${accentStyles.borderHover} ${accentStyles.glow}`}
+        className={`group relative card-brut rounded-3xl overflow-hidden border border-line/80 bg-gradient-to-b from-ink-2/95 via-ink-2/85 to-ink-3/95 transition-all duration-300 flex flex-col justify-between p-6 sm:p-7 shadow-xl hover:-translate-y-1.5 ${accentStyles.borderHover} ${accentStyles.glow}`}
       >
         {/* Cyberpunk corner decorative ticks */}
-        <div className="absolute top-2 left-2 text-[10px] font-mono text-muted/40 select-none pointer-events-none">
+        <div className="absolute top-3 left-3 text-[11px] font-mono text-muted/30 select-none pointer-events-none group-hover:text-acid/40 transition-colors">
           +
         </div>
-        <div className="absolute top-2 right-2 text-[10px] font-mono text-muted/40 select-none pointer-events-none">
+        <div className="absolute top-3 right-3 text-[11px] font-mono text-muted/30 select-none pointer-events-none group-hover:text-acid/40 transition-colors">
           +
         </div>
 
         <div>
           {/* Card Head / Terminal Bar */}
-          <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-line/60 bg-ink-3/40">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
+          <div className="flex items-center justify-between pb-4 mb-5 border-b border-line/60">
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${accentStyles.indicator}`} />
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${accentStyles.indicator}`} />
+                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${accentStyles.indicator}`} />
               </span>
-              <span className="font-mono text-[11px] tracking-wider uppercase text-ivory-2 font-medium">
+              <span className="font-mono text-xs tracking-wider uppercase text-ivory font-medium">
                 {developer.badgeCode || 'SYS // DEVELOPER'}
               </span>
             </div>
             <span
-              className={`font-mono text-[10px] px-2 py-0.5 rounded border ${accentStyles.bgBadge}`}
+              className={`font-mono text-[11px] px-3 py-1 rounded-full border font-semibold tracking-wider ${accentStyles.bgBadge}`}
             >
               {developer.status}
             </span>
           </div>
 
           {/* Aesthetic Image Frame with Image URL controls */}
-          <div className="relative px-5 pt-5 pb-2">
-            <div className="relative aspect-square sm:aspect-[4/3] w-full rounded-xl overflow-hidden border border-line bg-ink-3/80 group-hover:border-line-2 transition-colors">
+          <div className="relative">
+            <div className="relative aspect-[16/11] sm:aspect-[4/3] w-full rounded-2xl overflow-hidden border border-line/80 bg-ink-3/80 group-hover:border-line-2 transition-all shadow-inner">
               {/* Scanline & ambient noise overlay */}
               <div
                 className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-60 z-10 pointer-events-none"
@@ -144,41 +144,41 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
               )}
 
               {/* Floating Image Action Overlay (Inspect & Copy URL) */}
-              <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-3 right-3 z-20 flex items-center gap-2 opacity-90 group-hover:opacity-100 transition-opacity">
                 <button
                   type="button"
                   onClick={handleCopyImageUrl}
                   title="Copy Image URL"
-                  className="p-1.5 rounded-lg bg-ink/80 backdrop-blur-md border border-line text-ivory-2 hover:text-acid hover:border-acid transition-colors shadow-lg"
+                  className="p-2 rounded-xl bg-ink/80 backdrop-blur-md border border-line/80 text-ivory-2 hover:text-acid hover:border-acid transition-all shadow-lg"
                   aria-label="Copy direct image URL"
                 >
                   {copiedUrl ? (
-                    <Check className="w-3.5 h-3.5 text-acid" />
+                    <Check className="w-4 h-4 text-acid" />
                   ) : (
-                    <Copy className="w-3.5 h-3.5" />
+                    <Copy className="w-4 h-4" />
                   )}
                 </button>
                 <button
                   type="button"
                   onClick={() => setLightboxOpen(true)}
                   title="Expand Full Photo"
-                  className="p-1.5 rounded-lg bg-ink/80 backdrop-blur-md border border-line text-ivory-2 hover:text-acid hover:border-acid transition-colors shadow-lg"
+                  className="p-2 rounded-xl bg-ink/80 backdrop-blur-md border border-line/80 text-ivory-2 hover:text-acid hover:border-acid transition-all shadow-lg"
                   aria-label="Expand image in modal"
                 >
-                  <Maximize2 className="w-3.5 h-3.5" />
+                  <Maximize2 className="w-4 h-4" />
                 </button>
               </div>
 
               {/* URL Pill overlay at bottom */}
               <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-ink/85 backdrop-blur-md border border-line/70 text-[10px] font-mono text-ivory-2">
-                  <Sparkles className={`w-3 h-3 ${accentStyles.textAccent}`} />
-                  <span className="truncate max-w-[170px] sm:max-w-[210px] text-muted">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-ink/90 backdrop-blur-md border border-line/80 text-[11px] font-mono text-ivory-2 shadow-lg">
+                  <Sparkles className={`w-3.5 h-3.5 ${accentStyles.textAccent}`} />
+                  <span className="truncate max-w-[170px] sm:max-w-[220px] text-muted">
                     {developer.imageUrl}
                   </span>
                 </div>
                 {copiedUrl && (
-                  <span className="px-2 py-0.5 rounded bg-acid text-acid-ink font-mono text-[10px] font-bold shadow-md animate-fade-in">
+                  <span className="px-2.5 py-1 rounded-lg bg-acid text-acid-ink font-mono text-[10px] font-bold shadow-md animate-fade-in">
                     COPIED
                   </span>
                 )}
@@ -187,45 +187,47 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
           </div>
 
           {/* Profile Core Content */}
-          <div className="px-5 pt-3 pb-4">
-            <div className="tag-mono text-[11px] text-muted mb-1 flex items-center gap-1.5">
-              <span>{'//'}</span>
-              <span>{developer.department}</span>
+          <div className="pt-5 pb-1 space-y-4">
+            <div>
+              <div className="tag-mono text-xs text-muted/90 mb-1.5 flex items-center gap-1.5">
+                <span>{'//'}</span>
+                <span>{developer.department}</span>
+              </div>
+
+              <h3 className="display text-2xl sm:text-3xl font-bold text-ivory tracking-tight group-hover:text-acid transition-colors">
+                {developer.name}
+              </h3>
+
+              <p className={`font-mono text-xs sm:text-sm font-semibold uppercase tracking-wider mt-1 ${accentStyles.textAccent}`}>
+                {developer.role}
+              </p>
             </div>
 
-            <h3 className="display text-2xl font-bold text-ivory tracking-tight group-hover:text-acid transition-colors">
-              {developer.name}
-            </h3>
-
-            <p className={`font-mono text-xs font-semibold uppercase tracking-wider mt-0.5 ${accentStyles.textAccent}`}>
-              {developer.role}
-            </p>
-
-            <p className="text-xs text-ivory-2/90 leading-relaxed mt-2.5 line-clamp-3">
+            <p className="text-xs sm:text-sm text-ivory-2/90 leading-relaxed line-clamp-3 min-h-[3.6rem]">
               {developer.bio}
             </p>
 
             {/* Key Platform Contributions */}
-            <div className="mt-4 pt-3 border-t border-line/50">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-mono text-[11px] uppercase tracking-wider text-muted flex items-center gap-1">
-                  <Cpu className="w-3 h-3 text-acid" /> Shipped Contributions
+            <div className="pt-5 border-t border-line/50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-xs uppercase tracking-wider text-muted flex items-center gap-1.5">
+                  <Cpu className="w-3.5 h-3.5 text-acid" /> Shipped Contributions
                 </span>
                 {developer.contributions.length > 3 && (
                   <button
                     type="button"
                     onClick={() => setShowAllContributions((v) => !v)}
-                    className="font-mono text-[10px] text-acid hover:underline"
+                    className="font-mono text-[11px] text-acid hover:underline"
                   >
                     {showAllContributions ? 'Show Less' : `+${developer.contributions.length - 3} more`}
                   </button>
                 )}
               </div>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2.5">
                 {visibleContributions.map((item, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start gap-2 text-[11px] text-ivory-2 font-mono"
+                    className="flex items-start gap-2.5 text-xs sm:text-[13px] text-ivory-2 font-mono leading-relaxed"
                   >
                     <span className="text-acid select-none shrink-0 font-bold">›</span>
                     <span className="leading-snug">{item}</span>
@@ -235,15 +237,15 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
             </div>
 
             {/* Skills & Tech Stack Badges */}
-            <div className="mt-4 pt-3 border-t border-line/50">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-muted block mb-2 flex items-center gap-1">
-                <Layers className="w-3 h-3 text-muted" /> Tech Stack
+            <div className="pt-5 border-t border-line/50">
+              <span className="font-mono text-xs uppercase tracking-wider text-muted block mb-3 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-muted" /> Tech Stack
               </span>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {developer.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="font-mono text-[10px] px-2 py-0.5 rounded-md border border-line bg-ink-3/90 text-ivory-2 hover:border-line-2 transition-colors"
+                    className="font-mono text-[11px] px-3 py-1 rounded-lg border border-line/70 bg-ink-3/80 text-ivory-2 hover:border-acid/60 hover:text-acid transition-colors"
                   >
                     {skill}
                   </span>
@@ -254,36 +256,36 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
         </div>
 
         {/* Card Footer: Image URL Inspector & Social Actions */}
-        <div className="px-5 py-3.5 border-t border-line bg-ink-3/60 flex items-center justify-between gap-2">
+        <div className="mt-6 pt-5 border-t border-line/60 flex items-center justify-between gap-3">
           {/* Direct Image URL Quick Copy Button */}
           <button
             type="button"
             onClick={handleCopyImageUrl}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-line bg-ink/70 hover:border-acid hover:text-acid font-mono text-[11px] text-ivory-2 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-line/80 bg-ink/80 hover:border-acid hover:text-acid font-mono text-xs text-ivory-2 transition-colors shadow-sm"
             title={`Copy: ${developer.imageUrl}`}
           >
             {copiedUrl ? (
               <>
-                <Check className="w-3 h-3 text-acid" />
+                <Check className="w-3.5 h-3.5 text-acid" />
                 <span className="text-acid font-bold">Copied URL</span>
               </>
             ) : (
               <>
-                <Code2 className="w-3 h-3 text-muted" />
-                <span className="truncate max-w-[110px] sm:max-w-[130px]">{truncatedUrl}</span>
+                <Code2 className="w-3.5 h-3.5 text-muted" />
+                <span className="truncate max-w-[110px] sm:max-w-[140px]">{truncatedUrl}</span>
               </>
             )}
           </button>
 
           {/* Social Links Dock */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             {developer.githubUrl && (
               <a
                 href={developer.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="GitHub Profile"
-                className="p-1.5 rounded-lg text-ivory-2 hover:text-acid hover:bg-white/[0.05] transition-colors"
+                className="p-2 rounded-xl border border-line/60 bg-ink/60 text-ivory-2 hover:text-acid hover:border-acid hover:bg-acid/10 transition-colors"
                 aria-label={`${developer.name}'s GitHub`}
               >
                 <FaGithub className="w-4 h-4" />
@@ -296,7 +298,7 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Portfolio Website"
-                className="p-1.5 rounded-lg text-ivory-2 hover:text-acid hover:bg-white/[0.05] transition-colors"
+                className="p-2 rounded-xl border border-line/60 bg-ink/60 text-ivory-2 hover:text-acid hover:border-acid hover:bg-acid/10 transition-colors"
                 aria-label={`${developer.name}'s Portfolio`}
               >
                 <Globe className="w-4 h-4" />
@@ -309,7 +311,7 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="LinkedIn Profile"
-                className="p-1.5 rounded-lg text-ivory-2 hover:text-acid hover:bg-white/[0.05] transition-colors"
+                className="p-2 rounded-xl border border-line/60 bg-ink/60 text-ivory-2 hover:text-acid hover:border-acid hover:bg-acid/10 transition-colors"
                 aria-label={`${developer.name}'s LinkedIn`}
               >
                 <FaLinkedin className="w-4 h-4" />
@@ -322,7 +324,7 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Twitter / X"
-                className="p-1.5 rounded-lg text-ivory-2 hover:text-acid hover:bg-white/[0.05] transition-colors"
+                className="p-2 rounded-xl border border-line/60 bg-ink/60 text-ivory-2 hover:text-acid hover:border-acid hover:bg-acid/10 transition-colors"
                 aria-label={`${developer.name}'s Twitter`}
               >
                 <FaTwitter className="w-4 h-4" />
@@ -333,7 +335,7 @@ export function DeveloperCard({ developer }: DeveloperCardProps) {
               <a
                 href={`mailto:${developer.email}`}
                 title="Send Email"
-                className="p-1.5 rounded-lg text-ivory-2 hover:text-acid hover:bg-white/[0.05] transition-colors"
+                className="p-2 rounded-xl border border-line/60 bg-ink/60 text-ivory-2 hover:text-acid hover:border-acid hover:bg-acid/10 transition-colors"
                 aria-label={`Email ${developer.name}`}
               >
                 <Mail className="w-4 h-4" />
