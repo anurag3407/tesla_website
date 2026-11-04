@@ -64,6 +64,7 @@ export function Footer() {
         ['Resources', '/resources', null],
         ['Alumni', '/alumni', null],
         ['Gallery', '/gallery', null],
+        ['Developers', '/developers', null],
         ['Login', '/login', null],
         ['Contact', '/contact', null],
       ] as [string, string, React.ReactNode][],
@@ -161,7 +162,9 @@ export function Footer() {
       <div className="border-t border-line">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 font-mono text-[11px] tracking-[0.14em] uppercase text-muted">
           <span>© {new Date().getFullYear()} TESLA TECHNICAL CLUB</span>
-          <span>BUILT BY STUDENTS — FOR STUDENTS</span>
+          <Link href="/developers" className="hover:text-acid transition-colors underline-offset-4 hover:underline">
+            BUILT BY STUDENTS — FOR STUDENTS
+          </Link>
           <span className="text-acid font-bold">v4.0 / NOVA</span>
         </div>
       </div>

@@ -76,6 +76,7 @@ export function Navbar() {
     { name: 'Resources', href: '/resources' },
     { name: 'Alumni', href: '/alumni' },
     { name: 'Gallery', href: '/gallery' },
+    { name: 'Developers', href: '/developers' },
   ];
 
   const initials = (user?.name || '?')

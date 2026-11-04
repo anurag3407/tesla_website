@@ -25,4 +25,5 @@ export const PUBLIC_ROUTES = [
   '/gallery',
   '/achievements',
   '/contact',
+  '/developers',
 ];
