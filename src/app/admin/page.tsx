@@ -16,6 +16,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import { getErrorMessage } from '@/lib/errors';
 import { useLoaderEffect } from '@/lib/hooks';
+import { SupabaseKeepAliveCard } from '@/components/admin/SupabaseKeepAliveCard';
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface OverviewData {
   stats: {
@@ -465,6 +466,9 @@ export default function AdminOverview() {
           </div>
         </div>
       </motion.div>
+
+      {/* ── Supabase Heartbeat & 6-Day Auto-Pause Prevention Card ── */}
+      <SupabaseKeepAliveCard />
 
       {/* ── Analytics Stat Cards Grid ── */}
       <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-4" variants={containerVariants} initial="hidden" animate="show">
