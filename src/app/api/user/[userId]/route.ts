@@ -7,11 +7,9 @@ import { Resource } from '@/models/Resource';
 import type { IBlog, IEvent, IResource, IUser } from '@/types/models';
 import { requireAuth } from '@/lib/auth';
 import { isValidObjectId } from '@/lib/regex';
-
 import { getErrorMessage } from '@/lib/errors';
+
 // ─── GET: read-only profile dataset for any member by id ───
-// Mirrors /api/user/member-profile (self) but resolves an arbitrary userId so
-// the dynamic profile route can show another member's profile.
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   try {
     const { payload, response: authError } = await requireAuth();
@@ -74,6 +72,65 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       events,
     });
   } catch (error){
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+  }
+}
+
+// ─── PUT: Admin or Owner updates full profile dataset for this member ───
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
+  try {
+    const { payload, response: authError } = await requireAuth();
+    if (authError) return authError;
+
+    const { userId } = await params;
+    if (!isValidObjectId(userId)) {
+      return NextResponse.json({ success: false, message: 'Invalid user ID' }, { status: 400 });
+    }
+
+    const isOwn = userId === payload!.userId;
+    const isPrivileged = ['Admin', 'President'].includes(payload!.role);
+
+    if (!isOwn && !isPrivileged) {
+      return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
+    }
+
+    await connectDB();
+    const body = await request.json();
+
+    const allowedUpdates = [
+      'name', 'email', 'phone', 'bio', 'rollNo', 'branch', 'year', 'batch',
+      'company', 'currentRole', 'graduationYear', 'location', 'skills', 'interests',
+      'portfolio', 'resume', 'availability', 'cgpa', 'currentSemester', 'socialLinks',
+      'isPublic', 'status', 'designation', 'team'
+    ];
+
+    const updateDoc: Record<string, any> = {};
+    for (const key of allowedUpdates) {
+      if (body[key] !== undefined) {
+        // Only privileged admins can change sensitive attributes
+        if (['team', 'designation', 'status', 'email'].includes(key) && !isPrivileged) {
+          continue;
+        }
+        updateDoc[key] = body[key];
+      }
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateDoc },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!updated) {
+      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'User updated successfully',
+      user: updated,
+    });
+  } catch (error) {
     return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
   }
 }

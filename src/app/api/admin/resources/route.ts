@@ -156,3 +156,82 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
   }
 }
+
+// ─── PUT: Admin updates subject details or a specific file ───────────────────
+export async function PUT(request: NextRequest) {
+  try {
+    const { response: authError } = await requireRole([...CONTENT_MANAGERS]);
+    if (authError) return authError;
+
+    await connectDB();
+    const body = await request.json();
+    const { id, fileId, department, semester, subjectName, subjectCode, fileTitle, fileUrl, fileType } = body;
+
+    // A. Update specific file inside a resource
+    if (fileId && isValidObjectId(fileId)) {
+      const resource = await Resource.findOne({ 'files._id': fileId });
+      if (!resource) return NextResponse.json({ success: false, error: 'File not found' }, { status: 404 });
+      const file = resource.files.id(fileId);
+      if (!file) return NextResponse.json({ success: false, error: 'File not found' }, { status: 404 });
+
+      if (fileTitle !== undefined) file.title = fileTitle;
+      if (fileUrl !== undefined) file.fileUrl = fileUrl;
+      if (fileType !== undefined) file.type = fileType;
+
+      await resource.save();
+      return NextResponse.json({ success: true, resource });
+    }
+
+    // B. Update resource subject metadata
+    if (id && isValidObjectId(id)) {
+      const updateDoc: Record<string, any> = {};
+      if (department !== undefined) updateDoc.department = department;
+      if (semester !== undefined) updateDoc.semester = Number(semester);
+      if (subjectName !== undefined) updateDoc.subjectName = subjectName.trim();
+      if (subjectCode !== undefined) updateDoc.subjectCode = subjectCode.trim();
+
+      const resource = await Resource.findByIdAndUpdate(id, { $set: updateDoc }, { new: true });
+      if (!resource) return NextResponse.json({ success: false, error: 'Resource not found' }, { status: 404 });
+      return NextResponse.json({ success: true, resource });
+    }
+
+    return NextResponse.json({ success: false, error: 'Resource id or fileId required' }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+  }
+}
+
+// ─── DELETE: Admin deletes a resource subject or specific file ───────────────
+export async function DELETE(request: NextRequest) {
+  try {
+    const { response: authError } = await requireRole([...CONTENT_MANAGERS]);
+    if (authError) return authError;
+
+    await connectDB();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    const fileId = searchParams.get('fileId');
+
+    // A. Delete specific file
+    if (fileId && isValidObjectId(fileId)) {
+      const resource = await Resource.findOneAndUpdate(
+        { 'files._id': fileId },
+        { $pull: { files: { _id: fileId } } },
+        { new: true }
+      );
+      if (!resource) return NextResponse.json({ success: false, error: 'File not found' }, { status: 404 });
+      return NextResponse.json({ success: true });
+    }
+
+    // B. Delete entire subject
+    if (id && isValidObjectId(id)) {
+      const deleted = await Resource.findByIdAndDelete(id);
+      if (!deleted) return NextResponse.json({ success: false, error: 'Resource not found' }, { status: 404 });
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json({ success: false, error: 'Target id or fileId required' }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+  }
+}

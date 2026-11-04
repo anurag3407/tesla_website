@@ -32,7 +32,8 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     }
 
     const isAuthor = payload ? blog.author?.toString() === payload.userId : false;
-    if (blog.status !== 'Published' && !isAuthor) {
+    const isManager = payload?.role === 'Admin' || payload?.role === 'President';
+    if (blog.status !== 'Published' && !isAuthor && !isManager) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
@@ -66,10 +67,11 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     if (!blog) {
       return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     }
-    if (blog.author.toString() !== payload!.userId) {
+    const isManager = payload?.role === 'Admin' || payload?.role === 'President';
+    if (blog.author.toString() !== payload!.userId && !isManager) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
-    if (!EDITABLE_STATUSES.includes(blog.status)) {
+    if (!EDITABLE_STATUSES.includes(blog.status) && !isManager) {
       return NextResponse.json(
         { success: false, error: 'Only Draft or Rejected blogs can be edited.' },
         { status: 400 }
@@ -119,7 +121,8 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     if (!blog) {
       return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     }
-    if (blog.author.toString() !== payload!.userId) {
+    const isManager = payload?.role === 'Admin' || payload?.role === 'President';
+    if (blog.author.toString() !== payload!.userId && !isManager) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 

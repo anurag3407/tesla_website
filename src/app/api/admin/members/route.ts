@@ -337,16 +337,56 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: true, message: 'Permissions updated.', member: target }, { status: 200 });
     }
 
-    // ── Edit name / team / designation ──
+    // ── Edit member details (Admin / Managers can update all profile fields) ──
     if (action === 'updateDetails') {
       if (!isManager && !(isLeader && hasPerm(actorDoc, 'team:edit') && leaderOwnsTarget)) {
         return NextResponse.json({ success: false, message: 'You do not have permission to edit this member.' }, { status: 403 });
       }
-      const { name, team, designation } = body;
+      const {
+        name, email, team, designation, phone, bio, rollNo, branch, year, batch,
+        company, currentRole, graduationYear, location, skills, interests, portfolio,
+        resume, availability, cgpa, currentSemester, socialLinks, isPublic, isVerified, status
+      } = body;
+
       if (name !== undefined) target.name = name;
-      // Team Leaders can never move a member into a different team.
-      if (team !== undefined && isManager) target.team = team;
       if (designation !== undefined) target.designation = designation;
+
+      // Managers (Admin / President / OfficeBearer) can update all profile attributes
+      if (isManager) {
+        if (email !== undefined && email.trim()) target.email = email.toLowerCase().trim();
+        if (team !== undefined) target.team = team;
+        if (phone !== undefined) target.phone = phone;
+        if (bio !== undefined) target.bio = bio;
+        if (rollNo !== undefined) target.rollNo = rollNo;
+        if (branch !== undefined) target.branch = branch;
+        if (year !== undefined) target.year = year;
+        if (batch !== undefined) target.batch = Number(batch) || target.batch;
+        if (company !== undefined) target.company = company;
+        if (currentRole !== undefined) target.currentRole = currentRole;
+        if (graduationYear !== undefined) target.graduationYear = Number(graduationYear) || target.graduationYear;
+        if (location !== undefined) target.location = location;
+        if (skills !== undefined) {
+          target.skills = Array.isArray(skills)
+            ? skills
+            : String(skills).split(',').map((s: string) => s.trim()).filter(Boolean);
+        }
+        if (interests !== undefined) {
+          target.interests = Array.isArray(interests)
+            ? interests
+            : String(interests).split(',').map((s: string) => s.trim()).filter(Boolean);
+        }
+        if (portfolio !== undefined) target.portfolio = portfolio;
+        if (resume !== undefined) target.resume = resume;
+        if (availability !== undefined) target.availability = availability;
+        if (cgpa !== undefined) target.cgpa = cgpa;
+        if (currentSemester !== undefined) target.currentSemester = Number(currentSemester) || target.currentSemester;
+        if (socialLinks !== undefined && typeof socialLinks === 'object') {
+          target.socialLinks = { ...target.socialLinks, ...socialLinks };
+        }
+        if (isPublic !== undefined) target.isPublic = Boolean(isPublic);
+        if (isVerified !== undefined) target.isVerified = Boolean(isVerified);
+        if (status !== undefined) target.status = status;
+      }
 
       await target.save();
       return NextResponse.json({ success: true, message: 'Member details updated.', member: target }, { status: 200 });

@@ -59,9 +59,8 @@ export async function proxy(request: NextRequest) {
       return response;
     }
 
-    // The PI oversight dashboard is exclusive to the PI role (its API is also
-    // PI-gated — this just keeps other roles off the route entirely).
-    if (request.nextUrl.pathname.startsWith('/dashboard/pi') && role !== 'PI') {
+    // The PI oversight dashboard is viewable by PI, Admin, and President
+    if (request.nextUrl.pathname.startsWith('/dashboard/pi') && !['PI', 'Admin', 'President'].includes(role)) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }

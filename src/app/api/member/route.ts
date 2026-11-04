@@ -78,14 +78,21 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (target === 'resource') {
-      // Pull document context only if the file element was uploaded by the current user session ID
+      const actor = await User.findById(payload.userId).select('role status').lean<{ role?: string; status?: string }>();
+      const isManager = actor?.status !== 'inactive' && actor?.role && ['Admin', 'President', 'OfficeBearer'].includes(actor.role);
+
+      // Managers can delete any resource file; standard members only delete their own
+      const filter = isManager
+        ? { 'files._id': id }
+        : { 'files._id': id, 'files.uploadedBy': payload.userId };
+
       const result = await Resource.findOneAndUpdate(
-        { 'files._id': id, 'files.uploadedBy': payload.userId },
+        filter,
         { $pull: { files: { _id: id } } },
         { new: true }
       );
       if (!result) {
-        return NextResponse.json({ success: false, error: 'Access Denied: Object ownership mismatch.' }, { status: 403 });
+        return NextResponse.json({ success: false, error: 'Access Denied: Object ownership mismatch or resource not found.' }, { status: 403 });
       }
       return NextResponse.json({ success: true });
     }

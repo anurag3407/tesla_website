@@ -88,8 +88,8 @@ function countSeries(dates: (Date | string | null | undefined)[], buckets: Bucke
 const stripHtml = (s: string) => (s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
 export async function GET(req: NextRequest) {
-  // Only the PI may read this aggregate — everyone else keeps their own dashboards.
-  const { response } = await requireRole(['PI']);
+  // PI oversight dashboard is viewable by PI, Admin, and President
+  const { response } = await requireRole(['PI', 'Admin', 'President']);
   if (response) return response;
 
   try {

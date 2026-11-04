@@ -133,6 +133,39 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const { response: authError } = await requireRole([...CONTENT_MANAGERS]);
+    if (authError) return authError;
+
+    await connectDB();
+    const body = await request.json() as Partial<GalleryInput> & { id?: string };
+    const { id, title, imageUrl, mediaUrl, album, caption, mediaType, uploadSource } = body;
+
+    if (!id || !isValidObjectId(id)) {
+      return NextResponse.json({ success: false, error: 'Valid gallery ID required' }, { status: 400 });
+    }
+
+    const updateDoc: Record<string, any> = {};
+    if (title !== undefined) updateDoc.title = title;
+    if (imageUrl !== undefined) updateDoc.imageUrl = imageUrl;
+    if (album !== undefined) updateDoc.album = album;
+    if (mediaUrl !== undefined) updateDoc.mediaUrl = mediaUrl;
+    if (caption !== undefined) updateDoc.caption = caption;
+    if (mediaType !== undefined) updateDoc.mediaType = mediaType;
+    if (uploadSource !== undefined) updateDoc.uploadSource = uploadSource;
+
+    const item = await Gallery.findByIdAndUpdate(id, { $set: updateDoc }, { new: true });
+    if (!item) {
+      return NextResponse.json({ success: false, error: 'Media item not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, media: item }, { status: 200 });
+  } catch (error: unknown) {
+    return NextResponse.json({ success: false, error: getErrorMessage(error) }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     const { response: authError } = await requireRole([...CONTENT_MANAGERS]);

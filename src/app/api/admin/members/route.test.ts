@@ -167,5 +167,46 @@ describe('/api/admin/members edge cases', () => {
       expect(data.message).toMatch(/member removed/i);
       expect(userModel.findByIdAndDelete).toHaveBeenCalledWith(MEMBER_ID);
     });
+
+    it('allows Admin to update all details of a member across the platform', async () => {
+      authMock.getAuthPayload.mockResolvedValue({ userId: ADMIN_ID, role: 'Admin' });
+      const targetDoc = {
+        _id: MEMBER_ID,
+        name: 'Old Name',
+        role: 'TeamMember',
+        team: 'Old Team',
+        save: vi.fn().mockResolvedValue(true),
+      };
+
+      userModel.findById
+        .mockReturnValueOnce({
+          select: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue({ role: 'Admin' }),
+          }),
+        })
+        .mockResolvedValueOnce(targetDoc);
+
+      const req = new Request('http://localhost/api/admin/members', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: MEMBER_ID,
+          action: 'updateDetails',
+          name: 'New Name',
+          team: 'New Team',
+          bio: 'Updated Bio',
+          skills: ['Next.js', 'PostgreSQL'],
+        }),
+      });
+
+      const res = await PATCH(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(targetDoc.name).toBe('New Name');
+      expect(targetDoc.team).toBe('New Team');
+      expect(targetDoc.save).toHaveBeenCalled();
+    });
   });
 });
