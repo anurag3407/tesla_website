@@ -3,7 +3,6 @@ import { Features } from "@/components/sections/Features";
 import { FeaturedEvent } from "@/components/sections/FeaturedEvent";
 import { UpcomingEventsPreview } from "@/components/sections/UpcomingEventsPreview";
 import { OurImpact } from "@/components/sections/OurImpact";
-import { CTA } from "@/components/sections/CTA";
 
 export default function Home() {
   return (
@@ -13,7 +12,6 @@ export default function Home() {
       <FeaturedEvent />
       <UpcomingEventsPreview />
       <OurImpact />
-      <CTA />
     </div>
   );
 }
